@@ -5,6 +5,23 @@ type Data = {
   name: string;
 };
 
+/**
+ * @swagger
+ * /api/hello:
+ *   get:
+ *     description: Returns the hello world message
+ *     responses:
+ *       200:
+ *         description: Hello World!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 name:
+ *                   type: string
+ *                   example: John Doe
+ */
 export default function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>,

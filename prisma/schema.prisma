@@ -7,15 +7,65 @@ datasource db {
 }
 
 model User {
-  id        String    @id @default(uuid())
-  name      String?
-  email     String    @unique
-  phone     String?
-  role      Role      @default(ADMIN)
-  createdAt DateTime  @default(now())
+  id            String    @id @default(uuid())
+  name          String?
+  email         String    @unique
+  emailVerified Boolean?
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  role          Role      @default(ADMIN)
 
-  sessions  Session[]
-  movements Movement[]
+  sessions      Session[]
+  accounts      Account[]
+  movements     Movement[]
+
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime
+  updatedAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@map("session")
+}
+
+model Account {
+  id           String    @id
+  accountId    String
+  providerId   String
+  userId       String
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken  String?
+  refreshToken String?
+  idToken      String?
+  accessTokenExpiresAt DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope        String?
+  password     String?
+  createdAt    DateTime
+  updatedAt    DateTime
+
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+
+  @@map("verification")
 }
 
 model Movement {
@@ -24,13 +74,6 @@ model Movement {
   amount    Float
   date      DateTime
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
-}
-
-model Session {
-  id        String   @id @default(uuid())
-  userId    String
-  expiresAt DateTime
   user      User     @relation(fields: [userId], references: [id])
 }
 
